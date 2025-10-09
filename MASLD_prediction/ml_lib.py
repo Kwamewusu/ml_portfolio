@@ -38,7 +38,6 @@ def LOO_testing(data:DataFrame, target:str, model:str, predictor:Series,
     was left out.
     """
     
-#     for k in range(len(data)):
     for k in data.index:
         #Leaving One Out For Testing
         X_train = predictor.drop(k,axis=0)
@@ -88,7 +87,7 @@ def LOOwCO_testing(data:DataFrame, target:str, model:str, predictor:Series,
         X_train = predictor.drop(k,axis=0)
         X_test = predictor.loc[k]
         Y_train = response.drop(k,axis=0)
-        # Y_test = response.loc[k]
+        
         pos = Y_train.sum()
 
         #LOOCV, Training and Validation
@@ -117,22 +116,6 @@ def fnr_cutoff(cutoffs:ndarray, y_prob:Series|ndarray, y_train:Series|ndarray, p
             continue
         else:
             return (cutoff, tru_neg)
-        
-# def tree_cv_scoring(results, opts, min_depth, max_depth):
-#     count = 0
-#     while len(opts) != 0:
-#         measure=opts.pop(0)
-#         for idx in range(1, 21):
-#             dtree = DecisionTreeRegressor(criterion=measure, random_state=1,
-#                                          max_depth=idx)
-#             model = dtree.fit(x_train, y_train)
-#             pred = dtree.predict(x_test)
-#             model_score = cross_val_score(model, x_train, y_train, cv=10, 
-#                                           scoring='neg_root_mean_squared_error')
-
-#             dev_results[count].append(-model_score.mean())
-
-#         count += 1
 
 ###############################
 #### Statistical functions ####
