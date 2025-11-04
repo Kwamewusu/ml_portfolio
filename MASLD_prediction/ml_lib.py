@@ -544,7 +544,7 @@ def net_benefit(true_pred:DataFrame|ndarray, probabilities:list|tuple, start_thr
 ##########################
 
 def roc_plot(fig:Figure, data:DataFrame, target:str, model_list:list|tuple, 
-             models:list, title:str):
+             title:str):
     for model in model_list:
         y_true = data[target]
         y_prob = data[target + '_' + model + '_proba']
@@ -563,7 +563,7 @@ def roc_plot(fig:Figure, data:DataFrame, target:str, model_list:list|tuple,
         tenths=[n*0.1 for n in range(11)]
         
         fig.axes.append(
-            plot(FPR,TPR,label='+'.join(models[model])+', AUC='+str(round(AUC,4)),
+            plot(FPR,TPR,label='+'.join([model])+', AUC='+str(round(AUC,4)),
                 linewidth=4))
         
     fig.axes.append(
