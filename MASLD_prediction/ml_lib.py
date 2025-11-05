@@ -3,7 +3,7 @@
 # machine learning experience.
 
 from numpy import (sqrt, tanh, arctanh, transpose,
-    ndarray, array, linspace, round, zeros, ones)
+    ndarray, array, linspace, round, zeros, ones, exp)
 from sklearn.metrics import (roc_curve, roc_auc_score,
     confusion_matrix)
 from sklearn.linear_model import LogisticRegressionCV
@@ -103,6 +103,46 @@ def LOOwCO_testing(data:DataFrame, target:str, model:str, predictor:Series,
     #Formatting Predictions
     data[f'{target}_{model}_pred']=\
     data[f'{target}_{model}_pred'].astype('int64')
+
+def final_training(data, final_df, targets, models, model_keys, logreg_dict):
+    k=0
+    for target in targets:
+        for model in models:
+            final_df.loc[k,'target']=target
+            final_df.loc[k,'model']=model
+            
+            #Cross Validated Training
+            X=data[models[model]]
+            Y=data[target]
+            logreg_dict[target][model].fit(X,Y)
+            
+            #Checking AUC
+            Y_proba=logreg_dict[target][model].predict_proba(X)[:,1]
+            
+            #Computing AUC
+            final_df.loc[k,'AUC']=roc_auc_score(Y,Y_proba)
+            
+            #Getting Intercept
+            final_df.loc[k,'intercept']=logreg_dict[target][model].intercept_[0]
+            
+            #Getting Coefficients
+            coefs=logreg_dict[target][model].coef_[0]
+            for i,coef in enumerate(coefs):
+                final_df.loc[k,f'beta_{model_keys[model][i]}']=coef
+
+                final_df.loc[k,f'beta_std_{model_keys[model][i]}']=\
+                final_df.loc[k,f'beta_{model_keys[model][i]}']*(X[models[model][i]].std())
+                
+                final_df.loc[k,f'OR_std_{model_keys[model][i]}']=\
+                exp(final_df.loc[k,f'beta_std_{model_keys[model][i]}'])
+            
+            #Saving Model
+    #         dump(logreg_dict[target][model], f'3_cohorts/LRM_Fib_{target}_{model}.joblib')
+    #         dump(logreg_dict[target][model], f'4_cohorts/LRM_Fib_{target}_{model}.joblib')
+    #         dump(logreg_dict[target][model], f'nash/LRM_{target}_{model}.joblib')
+            
+            #Row Iterator
+            k+=1
 
 def fnr_cutoff(cutoffs:ndarray, y_prob:Series|ndarray, y_train:Series|ndarray, pos:int, fnr_min:float):
     for cutoff in cutoffs:
