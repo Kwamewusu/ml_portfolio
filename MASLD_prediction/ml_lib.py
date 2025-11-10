@@ -585,6 +585,9 @@ def net_benefit(true_pred:DataFrame|ndarray, probabilities:list|tuple, start_thr
 
 def roc_plot(fig:Figure, data:DataFrame, target:str, model_list:list|tuple, 
              title:str):
+    """
+    Plotting receiver-operator-characteristic curves.
+    """
     for model in model_list:
         y_true = data[target]
         y_prob = data[target + '_' + model + '_proba']
@@ -621,6 +624,9 @@ def roc_plot(fig:Figure, data:DataFrame, target:str, model_list:list|tuple,
     fig.tight_layout()
 
 def dca_plot(fig:Figure, net_benefits:DataFrame, title:str):
+    """
+    Plotting decision curves from net-benefit analyses.
+    """
          
     fig.axes.append(
         plot(net_benefits['threshold'], net_benefits['all'], color='r', 
